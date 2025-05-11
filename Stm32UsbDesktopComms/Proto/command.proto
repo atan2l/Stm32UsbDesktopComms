@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package stm32_command;
+
+message Command {
+  uint32 id = 1;
+  oneof action {
+    SetLed set_led = 2;
+    PowerControl power_control = 3;
+  }
+}
+
+message SetLed {
+  bool on = 1;
+}
+
+message PowerControl {
+  bool enable = 1;
+}

@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package stm32_response;
+
+message Response {
+  uint32 id = 1;
+  Status status = 2;
+}
+
+enum Status {
+  OK = 0;
+  ERROR = 1;
+  INVALID = 2;
+}
