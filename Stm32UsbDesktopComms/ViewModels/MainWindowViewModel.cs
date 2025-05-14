@@ -28,7 +28,7 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         Debug.Assert(SelectedUsbDevice is not null);
 
-        SerialPort sp = new(SelectedUsbDevice, 115200);
+        SerialPort sp = new(SelectedUsbDevice);
         sp.Open();
 
         Command c = new()
