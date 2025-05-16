@@ -15,10 +15,23 @@
         <vm:MainWindowViewModel />
     </Design.DataContext>
 
-    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="400">
-        <ComboBox ItemsSource="{Binding UsbDevices}" SelectedItem="{Binding SelectedUsbDevice}"
-                  HorizontalAlignment="Stretch" />
-        <Button Content="Select" Command="{Binding SelectUsbDeviceCommand}" />
-    </StackPanel>
+    <Grid RowDefinitions="Auto, 20, *" HorizontalAlignment="Center" MinWidth="400">
+        <StackPanel Grid.Row="0">
+            <ComboBox ItemsSource="{Binding UsbDevices}" SelectedItem="{Binding SelectedUsbDevice}"
+                      HorizontalAlignment="Stretch" />
+            <Grid ColumnDefinitions="*, *">
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <Button Content="Select" Command="{Binding SelectUsbDeviceCommand}" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" FlowDirection="RightToLeft" Spacing="5">
+                    <Button Content="LED On" Command="{Binding ControlLedCommand}" CommandParameter="{x:True}" />
+                    <Button Content="LED Off" Command="{Binding ControlLedCommand}" CommandParameter="{x:False}" />
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+
+        <TextBox Grid.Row="2" AcceptsReturn="True" TextWrapping="Wrap" VerticalAlignment="Stretch"
+                 Text="{Binding DeviceResponse}" IsReadOnly="True" />
+    </Grid>
 
 </Window>
