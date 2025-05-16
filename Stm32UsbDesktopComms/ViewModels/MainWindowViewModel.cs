@@ -25,6 +25,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private string _deviceResponse;
 
     private SerialPort? _serialPort;
+    private uint        _commandId;
 
     public bool CanSelectDevice => SelectedUsbDevice is not null;
     public bool CanControlLed   => _serialPort is not null;
@@ -33,6 +34,8 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     {
         UsbDevices     = new ObservableCollection<string>(SerialPort.GetPortNames());
         DeviceResponse = string.Empty;
+
+        _commandId = 1;
     }
 
     [RelayCommand(CanExecute = nameof(CanSelectDevice))]
@@ -54,7 +57,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
 
         Command command = new()
         {
-            Id = 1,
+            Id = _commandId++,
             SetLed = new SetLed
             {
                 On = !state
@@ -73,6 +76,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         {
             ms.WriteByte((byte)_serialPort.ReadByte());
         }
+
         ms.Seek(0, SeekOrigin.Begin);
 
         var response = Serializer.Deserialize<Response>(ms);
