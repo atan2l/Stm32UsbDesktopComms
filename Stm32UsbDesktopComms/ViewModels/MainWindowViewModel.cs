@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Ports;
+using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -64,22 +65,34 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             }
         };
 
-        Serializer.Serialize(_serialPort.BaseStream, command);
+
+        // I don't like this
+        using MemoryStream tempMs = new();
+        Serializer.Serialize(tempMs, command);
+
+        using MemoryStream commandMs = new();
+        commandMs.Write([0xAA, (byte)(tempMs.Length & 0xff), (byte)((tempMs.Length >> 8) & 0xff)]);
+
+        tempMs.Seek(0, SeekOrigin.Begin);
+        tempMs.CopyTo(commandMs);
+
+        commandMs.Seek(0, SeekOrigin.Begin);
+        commandMs.CopyTo(_serialPort.BaseStream);
 
         while (_serialPort.BytesToRead == 0)
         {
             Thread.Sleep(10);
         }
 
-        using MemoryStream ms = new();
+        using MemoryStream responseMs = new();
         while (_serialPort.BytesToRead > 0)
         {
-            ms.WriteByte((byte)_serialPort.ReadByte());
+            responseMs.WriteByte((byte)_serialPort.ReadByte());
         }
 
-        ms.Seek(0, SeekOrigin.Begin);
+        responseMs.Seek(0, SeekOrigin.Begin);
 
-        var response = Serializer.Deserialize<Response>(ms);
+        var response = Serializer.Deserialize<Response>(responseMs);
         DeviceResponse += JsonSerializer.Serialize(response) + Environment.NewLine;
     }
 
