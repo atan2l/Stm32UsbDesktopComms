@@ -7,6 +7,7 @@ message Command {
   oneof action {
     SetLed set_led = 2;
     PowerControl power_control = 3;
+    PrintMessage print_message = 4;
   }
 }
 
@@ -16,4 +17,8 @@ message SetLed {
 
 message PowerControl {
   bool enable = 1;
+}
+
+message PrintMessage {
+  string message = 1;
 }
