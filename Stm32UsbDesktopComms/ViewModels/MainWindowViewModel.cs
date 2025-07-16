@@ -151,8 +151,8 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
 
         var frame = new byte[3 + serialisedData.Length];
         frame[0] = 0xAA;
-        frame[1] = (byte)(serialisedData.Length        & 0xff);
-        frame[2] = (byte)((serialisedData.Length >> 8) & 0xff);
+        frame[1] = (byte)(serialisedData.Length        & 0xFF);
+        frame[2] = (byte)((serialisedData.Length >> 8) & 0xFF);
 
         Array.Copy(
             serialisedData,
